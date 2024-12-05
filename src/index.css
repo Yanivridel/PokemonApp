@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+ul, ol {
+    list-style: none;
+}
+img {
+    display: block;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
