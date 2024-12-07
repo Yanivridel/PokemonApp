@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Provider } from 'react-redux';
+import store from './store';
 
 const theme = createTheme({
   palette: {
@@ -20,8 +22,10 @@ const theme = createTheme({
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </Provider>
   </StrictMode>,
 )

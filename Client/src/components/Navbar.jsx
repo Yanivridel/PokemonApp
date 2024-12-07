@@ -30,10 +30,9 @@ const Navbar = () => {
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-
     const navLinks = [
         { to: "/", label: "Home" },
-        { to: "/pokemons", label: "Pokemons" },
+        { to: "/pokemons?page=1&name=&type=", label: "Pokemons" },
         { to: "/about", label: "About" },
         { to: "/contact", label: "Contact" },
     ];
