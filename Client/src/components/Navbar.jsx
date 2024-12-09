@@ -1,20 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import webLogo from './../assets/pokemon_logo.png'
-import {
-    AppBar,
-    Toolbar,
-    Typography,
-    IconButton,
-    Drawer,
-    List,
-    ListItem,
-    ListItemText,
-    ListItemButton,
-    ListItemIcon,
-    Box,
-    Button
-} from "@mui/material";
-import { Link } from "react-router-dom";
+import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemButton, ListItemIcon, Box, Button, Avatar} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme, useMediaQuery } from "@mui/material";
 
 // Icons
@@ -23,12 +10,20 @@ import CloseIcon from '@mui/icons-material/Close';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useDispatch, useSelector } from "react-redux";
+// Functions
+import { stringAvatar, stringToColor } from "../services/avatar.js";
+import { unsetUser } from "../store/slices/userSlice.js";
 
 const Navbar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
+    const userLogged = useSelector(state => state.userLogged);
     const theme = useTheme();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
     const navLinks = [
         { to: "/", label: "Home" },
@@ -44,6 +39,12 @@ const Navbar = () => {
     const toggleDrawer = (open) => setDrawerOpen(open);
     function handleListItemClick(e, index) {
         setSelectedIndex(index);
+        toggleDrawer(false);
+    }
+
+    const handleLogout = (e) => {
+        dispatch(unsetUser());
+        navigate('/login')
         toggleDrawer(false);
     }
 
@@ -104,6 +105,7 @@ const Navbar = () => {
                         >
                         PokeZone
                     </Typography>
+                    {/* Header Navigation Links */}
                     <Box sx={{ display: "flex", gap: 2 }}>
                         {navLinks.map((link) => (
                         <Button
@@ -121,6 +123,13 @@ const Navbar = () => {
                         </Button>
                         ))}
                     </Box>
+                    { userLogged.isLogged ? 
+                    <Link to="/user-settings">
+                        <Avatar 
+                        {... stringAvatar(userLogged.username)}
+                        />
+                    </Link>
+                    :
                     <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", ml: 4}}>
                         {navUser.map((link) =>
                         <Typography
@@ -139,6 +148,7 @@ const Navbar = () => {
                         </Typography>
                         )}
                     </Box>
+                    }
                 </Box>
             )}
             </Toolbar>
@@ -197,7 +207,30 @@ const Navbar = () => {
                 </ListItem>
             ))}
             </List>
-            {/* User Options List */}
+            { userLogged.isLogged ? 
+            <Box sx={{marginTop: "auto", display: "flex", alignItems: "center"}}>
+                <Link to="/user-settings">
+                    <Avatar 
+                    {... stringAvatar(userLogged.username)}
+                    onClick={() => toggleDrawer(false)}
+                    />
+                </Link>
+                <Typography 
+                variant="h6"
+                onClick={handleLogout}
+                sx={{
+                    "&:hover": {
+                        color: theme.palette.primary.main,
+                        textDecoration: "underline",
+                        cursor: "pointer", 
+                        transition: "color 0.3s ease, text-decoration 0.3s ease",
+                    },
+                }}
+                >
+                    Log Out
+                </Typography>
+            </Box>
+            :
             <List sx={{ width: 250, mt:"auto" }}>
                 {navUser.map((link) => 
                 <ListItem key={link.to} disablePadding>
@@ -214,6 +247,7 @@ const Navbar = () => {
                 </ListItem>
                 )}
             </List>
+            }            
         </Drawer>
         </>
     );

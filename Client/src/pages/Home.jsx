@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, Typography, Grid, Button, Card, CardContent } from "@mui/material";
 import { Link } from "react-router-dom";
+// Function
+import { getThreeRandomNumbers } from "../services/pokemon";
 
 const Home = () => {
     return (
@@ -21,7 +23,7 @@ const Home = () => {
         </Typography>
         <Grid container spacing={3}>
             {/* Sample Pokémon Card */}
-            {[1, 2, 3].map((id) => (
+            {getThreeRandomNumbers(1,1000).map((id) => (
             <Grid item xs={12} sm={6} md={4} key={id}>
                 <Card sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <img

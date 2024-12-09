@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Typography, Grid2, Box, CircularProgress, Button, Paper } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Typography, Grid2, Box, CircularProgress, Button, Paper, IconButton } from '@mui/material';
+import AnimationIcon from '@mui/icons-material/Animation';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useTheme } from '@emotion/react';
 import PokemonDetails from './PokemonDetails';
+
+const cfl = (str) => { return str.charAt(0).toUpperCase() + str.slice(1)};
 
 const PokemonCard = () => {
     const { name } = useParams();
@@ -11,15 +16,22 @@ const PokemonCard = () => {
     const secondColor = theme.palette.secondary.main;
     const [showAnimation, setShowAnimation] = useState(false);
     const [selectedButton, setSelectedButton] = useState("About");
+    const [ liked, setLiked ] = useState(false);
     const breakpoint = 780;
+    const navigate = useNavigate();
 
     useEffect(() => {
-            fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setPokemon(data);
-            });
-        }, []);
+        fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+        .then((response) => response.json())
+        .then((data) => {
+            if (!data || Object.keys(data).length === 0)
+                navigate('/404');
+            setPokemon(data);
+        })
+        .catch(() => {
+            navigate('/404');
+        });
+    }, [name]);
 
     if (!pokemon) 
     return <div style={{display: "flex", justifyContent: "center", alignItems: 'end', height:300}}>
@@ -45,23 +57,51 @@ const PokemonCard = () => {
                     minHeight: 350,
                 },
             }}>
-                <Typography>
-                    {pokemon.name}
+                <Typography
+                sx={{
+                    p: 4,
+                    fontFamily: "Baloo2",
+                    fontSize: 40,
+                    fontWeight: 700,
+                    position: 'relative',
+                    zIndex: 1000
+                }}
+                >
+                    {pokemon.name.split("-").map(word => cfl(word)).join(" ")}
                 </Typography>
-                <Button variant="contained" onClick={() => setShowAnimation(!showAnimation)}>
-                {showAnimation ? 'Stop Animation' : 'Show Animation'}
-                </Button>
+                <IconButton
+                color='primary'
+                sx={{
+                    position: "absolute",
+                    bottom: "5%",
+                    right: "10%",
+                    zIndex: 1000
+                }}
+                onClick={() => setShowAnimation(!showAnimation)}>
+                    <AnimationIcon sx={{ fontSize: 40}}/>
+                </IconButton>
+                <IconButton
+                color='primary'
+                sx={{
+                    position: "absolute",
+                    bottom: "5%",
+                    left: "10%",
+                    zIndex: 1000
+                }}
+                onClick={() => setLiked(!liked)}>
+                    { liked ? <FavoriteIcon sx={{ fontSize: 40}}/> : <FavoriteBorderIcon sx={{ fontSize: 40}}/>}
+                </IconButton>
                 <Box 
                 component='img'
                 src={!showAnimation ? pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default
                 : `https://play.pokemonshowdown.com/sprites/ani/${pokemon.name.toLowerCase()}.gif`}
-                alt={pokemon.name} 
+                alt={pokemon.name}
                 width={170}
                 sx={{
                     position: 'absolute',
                     zIndex: 200,
-                    transform: 'translate(-50%,-50%)',
-                    top: 230,
+                    transform: 'translate(-50%)',
+                    bottom: 10,
                     left: '50%'
                 }}
                 >
@@ -78,7 +118,8 @@ const PokemonCard = () => {
                 width: 390,
                 maxWidth: '100%',
                 mt: -3,
-                padding: '3rem 2rem',
+                mb: 5,
+                padding: '1rem 1.9rem',
                 zIndex: 100,
                 borderTopLeftRadius: 30,
                 borderTopRightRadius: 30,
@@ -90,9 +131,33 @@ const PokemonCard = () => {
                     mt: 5,
                     ml: -3,
                     minHeight: 350,
+                    maxHeight: 350,
+                    overflowY: "auto",
+                },
+                '&::-webkit-scrollbar': {
+                    width: '8px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: (theme) => theme.palette.primary.main,
+                    borderRadius: '10px',
+                    border: `2px solid ${theme.palette.background.paper}`,
+                },
+                '&::-webkit-scrollbar-track': {
+                    backgroundColor: theme.palette.background.default,
+                    borderRadius: '10px',
                 },
                 }}>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <Box 
+                    sx={{
+                        display: 'flex', 
+                        gap: 1,
+                        overflow: "visible", 
+                        position: 'sticky', 
+                        top: 0, 
+                        zIndex: 300,
+                        backdropFilter: 'blur(5px)',
+                    }}
+                    >
                         {['About', 'Base Stats', 'Evolution', 'Moves'].map((label) => (
                             <Button
                             key={label}
@@ -104,7 +169,7 @@ const PokemonCard = () => {
                             }}
                             onClick={() => setSelectedButton(label)}
                             >
-                            {label}
+                                {label}
                             </Button>
                         ))}
                     </Box>
@@ -116,31 +181,3 @@ const PokemonCard = () => {
 };
 
 export default PokemonCard;
-
-
-/*
-<Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
-        <Card sx={{ maxWidth: 345, display: 'flex', flexDirection: 'column' }}>
-            <Box
-                
-                // component="img"
-                // alt={`${pokemon.types[0].type.name} type`}
-                // height="140"
-                sx={{ height: 'auto', width: 300}}
-            />
-            <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                Lizard
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Lizards are a widespread group of squamate reptiles, with over 6,000
-                species, ranging across all continents except Antarctica
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-            </CardActions> 
-            </Card>
-            </Box>
-*/

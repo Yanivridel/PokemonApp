@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 
 // utils imports
 import { hashPassword, comparePassword } from "../utils/auth.js";
-const JTW_EXPIRATION = { expiresIn: '1h'};
 
+const JTW_EXPIRATION = { expiresIn: '1d'};
 
 // Done
 export const createUser = async (req, res) => {
@@ -12,7 +12,7 @@ export const createUser = async (req, res) => {
         const { username, email, password } = req.body;
     
         if(!username || !email || !password)
-            return res.status("400").send({status: "error", message: "Missing required parameters"});
+            return res.status(400).send({status: "error", message: "Missing required parameters"});
         
         const newUser = new userModel({
             username,
@@ -47,15 +47,15 @@ export const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         if(!email || !password)
-            return res.status("400").send({status: "error", message: "Missing required parameters"});
+            return res.status(400).send({status: "error", message: "Missing required parameters"});
     
         const user = await userModel.findOne({ email }).select("+password");
 
         if (!user)
             return res.status(404).send({status: "error", message: "User not found"});
     
-        const isCorrectPassword = comparePassword(password,user.password);
-    
+        const isCorrectPassword = await comparePassword(password,user.password);
+
         if (isCorrectPassword) {
             let jwtSecretKey = process.env.JWT_SECRET_KEY;
     
@@ -75,7 +75,12 @@ export const loginUser = async (req, res) => {
             sameSite: "strict", // Prevent cross-site requests.
             maxAge: 3600000, // Cookie lifespan of 1 hour (in milliseconds).
             });
-            res.json({ status: "succuss", message: "Logged in successfully", token: token });
+            res.json({ 
+                status: "succuss",
+                message: "Logged in successfully", 
+                token: token,
+                user
+            });
         } 
         else {
             // Send a 401 response if the password is incorrect.
@@ -92,7 +97,7 @@ export const loginUser = async (req, res) => {
         });
     }
 }
-// Not Done
+// Done
 export const getSelf = async (req, res) => {
     try {
         let jwtSecretKey = process.env.JWT_SECRET_KEY;
@@ -115,12 +120,12 @@ export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
         if(!id)
-            return res.status("400").send({status: "error", message: "Missing required parameters"});
+            return res.status(400).send({status: "error", message: "Missing required parameters"});
 
         const foundUser = await userModel.findById(req.params.id);
 
         if (!foundUser)
-            return res.status(404).send("User not found");
+            return res.status("404").send({status: "error", message: "User not found"});
 
         res.status(200).send({
             status: "succuss",
