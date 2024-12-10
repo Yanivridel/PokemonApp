@@ -1,12 +1,31 @@
-import React from "react";
-import { Box, Typography, Grid, Button, Card, CardContent } from "@mui/material";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Grid, Button, Card, CardContent, Paper, Chip } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+// img / gif
+import rollGif from "./../assets/gif/poke-ball-rolling.gif"
 // Function
-import { getThreeRandomNumbers } from "../services/pokemon";
+import { calculateTextColor, cfl, getDailyNumbers, getTypeColor } from "../services/pokemon";
+import { useTheme } from "@emotion/react";
+import { fetchThreePokemons } from "../services/pokemon";
+
 
 const Home = () => {
+    const [ pokemons, setPokemons ] = useState([]);
+    const [ paperHover, setPaperHover] = useState(null);
+    const navigate = useNavigate();
+    const theme = useTheme();
+
+    useEffect(() => {
+        fetchThreePokemons(setPokemons);
+    }, []);
+
+    const handleTypeClick = (e, type) => {
+        e.stopPropagation();
+        navigate(`/pokemons?type=${type}`)
+    }
+
     return (
-        <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 3 , maxWidth: 1350, marginInline: "auto"}}>
         {/* Welcome Section */}
         <Box sx={{ textAlign: "center", marginBottom: 4 }}>
             <Typography variant="h3" component="h1" sx={{ fontWeight: "bold", marginBottom: 2 }}>
@@ -19,33 +38,93 @@ const Home = () => {
 
         {/* Featured Pokémon */}
         <Typography variant="h5" component="h2" sx={{ marginBottom: 2 }}>
-            Featured Pokémon
+            Daily Pokémon
         </Typography>
-        <Grid container spacing={3}>
-            {/* Sample Pokémon Card */}
-            {getThreeRandomNumbers(1,1000).map((id) => (
-            <Grid item xs={12} sm={6} md={4} key={id}>
-                <Card sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <img
-                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-                    alt={`Pokemon ${id}`}
-                    width={100}
-                    height={100}
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2}}>
+            {pokemons.map((pokemon, index) => 
+            <Paper 
+            key={pokemon.id}
+            className={"pokemon-paper " + `${pokemon.types[0]?.type?.name}`}
+            elevation={4}
+            sx={{
+                position: 'relative',
+                flexGrow: 1,
+                minWidth: 300,
+                minHeight: 150,
+                backgroundSize: "cover",
+                backgroundPosition: 0,
+                cursor: 'pointer',
+            }}
+            onClick={() => navigate(`/pokemon/${pokemon.name}`)}
+            onMouseEnter={() => setPaperHover(index)}
+            onMouseLeave={() => setPaperHover(null)}
+            >   
+                <Box
+                    sx={{
+                    position: 'absolute',
+                    width: 150,
+                    height: 150,
+                    backgroundImage: `url(${pokemon.sprites.other['official-artwork'].front_default})`,
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    }}
                 />
-                <CardContent>
-                    <Typography variant="h6" component="h3">
-                    Pokémon {id}
+                { paperHover === index &&
+                <Box
+                sx={{
+                position: 'absolute',
+                transform: 'translate(-50%,-50%)',
+                left: "50%",
+                top: "50%",
+                zIndex: 100,
+                width: 75,
+                height: 75,
+                backgroundImage: `url(${rollGif})`,
+                backgroundSize: "contain",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                }}
+                />
+                }
+                <Box sx={{ 
+                    position: "relative",
+                    zIndex: 500,
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left", 
+                    flexGrow: 1, 
+                    m: 4, 
+                    ml: "auto",
+                    width: "fit-content"
+                    }}>
+                    <Typography variant="h5" sx={{ fontFamily: 'Sebino', fontWeight: 900, mb: 1}}>
+                    {pokemon.name.split("-").map(word => cfl(word)).join(" ")}
                     </Typography>
-                    <Button variant="contained" color="primary" sx={{ marginTop: 1 }}>
-                    <Link to={`/pokemon/${id}`} style={{ color: "white", textDecoration: "none" }}>
-                        View Details
-                    </Link>
-                    </Button>
-                </CardContent>
-                </Card>
-            </Grid>
-            ))}
-        </Grid>
+                    <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                    {pokemon.types.map((type, index) => (
+                        <Chip
+                        key={index + `${type}`}
+                        label={cfl(type.type.name)}
+                        sx={{
+                            color: `${calculateTextColor(getTypeColor(type.type.name))}`,
+                            fontSize: "0.75rem",
+                            background: `${getTypeColor(type.type.name)}`,
+                            border: `0.5px solid ${theme.palette.primary.main}`,
+                            '&:hover': {
+                                transform: 'scale(1.05)',
+                                boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
+                                background: `${getTypeColor(type.type.name)}`,
+                            }
+                        }}
+                        onClick={(e) => handleTypeClick(e, type.type.name)}
+                        />
+                    ))}
+                    </Box>
+                </Box>
+            </Paper>
+            )}
+        </Box>
 
         {/* Navigation Buttons */}
         <Box sx={{ textAlign: "center", marginTop: 4 }}>
@@ -60,9 +139,10 @@ const Home = () => {
             </Link>
             </Button>
         </Box>
-        </Box>
+    </Box>
     );
 };
+
 
 export default Home;
 

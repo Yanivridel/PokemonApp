@@ -5,7 +5,9 @@ import {
     createUser,
     loginUser,
     getSelf,
-    getUserById
+    getUserById,
+    addFavPokemon,
+    deleteFavPokemon,
 } from '../controllers/userController.js'
 
 const router = express.Router();
@@ -19,5 +21,9 @@ router.post('/login', loginUser);
 router.get('/get-self', getSelf);
 
 router.get('/:id', getUserById);
+
+router.post('/pokemons/add', addFavPokemon);
+
+router.post('/pokemons/delete', deleteFavPokemon);
 
 export default router;

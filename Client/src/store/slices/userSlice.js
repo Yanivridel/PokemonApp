@@ -5,22 +5,17 @@ const userSlice = createSlice({
     initialState: {
         isLogged: false,
         username: "",
-        email: ""
+        email: "",
+        favPokemons: []
     },
     reducers: {
-        // setUser: (state, action) => {
-        //     state.username = action.payload.username;
-        //     state.email = action.payload.email
-        //     state.isLogged = true;
-        // },
         setUser: (state, action) => {
-            // Ensure the username and email are present in the payload
-            const { username, email } = action.payload;
+            const { username, email, favPokemons } = action.payload;
             
-            // Only update if username and email are available
-            if (username && email) {
+            if (username && email && favPokemons) {
                 state.username = username;
                 state.email = email;
+                state.favPokemons = favPokemons;
                 state.isLogged = true;
             } else {
                 console.error("Invalid user data:", action.payload);
@@ -29,11 +24,19 @@ const userSlice = createSlice({
         unsetUser: (state, action) => {
             state.username = "";
             state.email = "";
+            state.favPokemons = [];
             state.isLogged = false;
-        }
+        },
+        addPokemon: (state, action) => {
+            if (!state.favPokemons.includes(action.payload.pokemonName))
+                state.favPokemons.push(action.payload.pokemonName);
+        },
+        deletePokemon: (state, action) => {
+            state.favPokemons = state.favPokemons.filter(poke => poke !== action.payload.pokemonName);
+        },
     }
 })
 
-export const { setUser, unsetUser } = userSlice.actions;
+export const { setUser, unsetUser, addPokemon, deletePokemon } = userSlice.actions;
 
 export default userSlice.reducer;

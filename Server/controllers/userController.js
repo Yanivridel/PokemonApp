@@ -63,6 +63,7 @@ export const loginUser = async (req, res) => {
             {
                 email: user.email,
                 username: user.username,
+                favPokemons: user.favPokemons
             },
             jwtSecretKey,
             JTW_EXPIRATION
@@ -155,5 +156,70 @@ export const getAllUsers = async (req, res) => {
             message: "An unexpected error occurred",
             error: error.message,
         });
+    }
+};
+
+export const addFavPokemon = async (req, res) => {
+    const { email, pokemonName } = req.body;
+
+    if(!email || !pokemonName) 
+        return res.status(400).send({status: "error", message: "Missing required parameters"});
+
+    try {
+        const updatedUser = await userModel.findOneAndUpdate(
+        {email},
+        { $addToSet: { favPokemons: pokemonName } }, // $addToSet prevents duplicates
+        { new: true } // Return the updated document
+        );
+
+        if (!updatedUser) {
+        return res.status(404).send({ status: 'error', message: 'User not found' });
+        }
+
+        res.status(200).json({
+        status: 'success',
+        message: 'Favorite Pokémon added successfully',
+        data: updatedUser,
+        });
+
+    }
+    catch (error) {
+        res.status(500).json({
+            status: "error",
+            message: "An unexpected error occurred",
+            error: error.message,
+        });
+    }
+}
+
+export const deleteFavPokemon = async (req, res) => {
+    const { email, pokemonName } = req.body;
+    
+    if (!email || !pokemonName) {
+        return res.status(400).send({ status: 'error', message: 'Missing required parameters' });
+    }
+
+    try {
+    const updatedUser = await userModel.findOneAndUpdate(
+        { email },
+        { $pull: { favPokemons: pokemonName } }, // $pull removes matching values from the array
+        { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+        return res.status(404).send({ status: 'error', message: 'User not found' });
+    }
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Favorite Pokémon removed successfully',
+        data: updatedUser,
+    });
+    } catch (error) {
+    res.status(500).json({
+        status: 'error',
+        message: 'An unexpected error occurred',
+        error: error.message,
+    });
     }
 };

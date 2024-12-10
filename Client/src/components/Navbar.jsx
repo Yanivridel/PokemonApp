@@ -27,7 +27,7 @@ const Navbar = () => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
     const navLinks = [
         { to: "/", label: "Home" },
-        { to: "/pokemons?page=1&name=&type=", label: "Pokemons" },
+        { to: "/pokemons?page=1&name=&type=&weight=0%2C650&height=0%2C20", label: "Pokemons" },
         { to: "/about", label: "About" },
         { to: "/contact", label: "Contact" },
     ];

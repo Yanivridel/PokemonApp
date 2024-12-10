@@ -1,4 +1,67 @@
+import axios from "axios";
 
+// Fetching Pokemon Api
+const pokemonUrl = 'https://pokeapi.co/api/v2/pokemon';
+
+export const fetchAllPokemon = async (dispatch, setLoading, setPokemons) => {
+    dispatch(setLoading(true));
+    const response = await fetch(`${pokemonUrl}?limit=10000`);
+    const data = await response.json();
+    
+    const detailedPokemon = await Promise.all(
+    data.results.map(async (poke) => {
+        const pokeDetails = await fetch(poke.url);
+        return await pokeDetails.json();
+    })
+    );
+
+    dispatch(setPokemons(detailedPokemon));
+    dispatch(setLoading(false));
+};
+
+export const fetchThreePokemons = async (setPokemons) => {
+    const responses = await Promise.all(getDailyNumbers().map((id) => fetch(`${pokemonUrl}/${id}`)));
+    const dataArr = await Promise.all(responses.map(res => res.json()));
+    setPokemons(dataArr);
+}
+// Fetching Server
+const serverUrl = 'http://localhost:3000';
+
+export const addFavPokemon = async (email, pokemonName) => {
+    try {
+        const response = await axios.post(`${serverUrl}/api/users/pokemons/add`, {
+            email,
+            pokemonName,
+        });
+    
+        if (response.status === 200) {
+            console.log('Successfully added Pokémon to favorites', response.data);
+            return response.data;
+        }
+    } catch (error) {
+        console.error('Error adding Pokémon to favorites:', error.message);
+        return { status: 'error', message: error.message };
+    }
+}
+
+export const deleteFavPokemon = async (email, pokemonName) => {
+    try {
+        const response = await axios.post(`${serverUrl}/api/users/pokemons/delete`, {
+            email,
+            pokemonName,
+        });
+    
+        if (response.status === 200) {
+            console.log('Successfully deleted Pokémon to favorites', response.data);
+            return response.data;
+        }
+    } catch (error) {
+        console.error('Error adding Pokémon to favorites:', error.message);
+        return { status: 'error', message: error.message };
+    }
+}
+
+// Others
 export const allTypes = [
     "All",
     "Fire",
@@ -61,7 +124,6 @@ export const calculateTextColor = (hex) => {
 
 export const cfl = (name) => name.slice(0,1).toUpperCase() + name.slice(1);
 
-
 export const createData = (leftSide, rightSide) => {return { leftSide, rightSide }}
 
 export const weightToKg = (weight) => (weight * 0.1).toFixed(1);
@@ -108,3 +170,26 @@ export const getPokemonMoves = (pokemonData) => {
         versionGroup: entry.version_group_details[0].version_group.name,
     }));
 };
+
+export function getDailyNumbers() {
+    const today = new Date().toISOString().split('T')[0];
+    const seed = hashString(today);
+    
+    return [
+        randomNumber(seed, 1),
+        randomNumber(seed, 2),
+        randomNumber(seed, 3),
+    ];
+}
+function hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = (hash * 31 + char) & 0xffffffff;
+    }
+    return Math.abs(hash);
+}
+function randomNumber(seed, offset) {
+    const modSeed = (seed + offset * 999983) % 1000000;
+    return (modSeed % 1000) + 1;
+}

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPokemons, setLoading } from "./../store/slices/pokemonsSlice.js";
-import { Pagination, Stack, Grid2, Box, TextField, CircularProgress, Slider, Autocomplete, Typography } from "@mui/material";
+import { Pagination, Stack, Grid2, Box, TextField, CircularProgress, Slider, Autocomplete, Typography, Button } from "@mui/material";
 import PokemonPaper from "./PokemonPaper";
 import { useSearchParams } from "react-router-dom";
 import './css/PokemonList.css';
 // Functions
 import { scrollToTop } from '../services/others';
 import { weightToKg, heightToMeters, allTypes, cfl } from "../services/pokemon.js";
+import { fetchAllPokemon } from "../services/pokemon.js";
 
 function PokemonList() {
     const [currentPokemonsPage, setCurrentPokemonsPage] = useState([]);
@@ -16,6 +17,8 @@ function PokemonList() {
     const minDistanceWeight = 30;
     const minDistanceHeight = 0.1;
 
+    const breakpoint = 470
+
     const dispatch = useDispatch();
     const { allPokemons, loading } = useSelector((state) => state.pokemonsData);
 
@@ -23,34 +26,20 @@ function PokemonList() {
         page: 1,
         name: "",
         type: "",
-        weight: [],
-        height: [],
+        weight: [0,650],
+        height: [0,20],
     });
-
-    const fetchAllPokemon = async () => {
-        dispatch(setLoading(true));
-        const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10000");
-        const data = await response.json();
-        
-        const detailedPokemon = await Promise.all(
-        data.results.map(async (poke) => {
-            const pokeDetails = await fetch(poke.url);
-            return await pokeDetails.json();
-        })
-        );
-
-    dispatch(setPokemons(detailedPokemon));
-    dispatch(setLoading(false));
-    };
-
+    
+    // Mount Call 
     useEffect(() => {
-        if(getWidth(0) !== 0 && !getWidth(0) || !getWidth(1)) searchParams.set("weight", [0,650]);
+        if(getWeight(0) !== 0 && !getWeight(0) || !getWeight(1)) searchParams.set("weight", [0,650]);
         if(getHeight(0) !== 0 && !getHeight(0) || !getHeight(1)) searchParams.set("height", [0,20]);
         if (allPokemons.length === 0) {
-            fetchAllPokemon();
+            fetchAllPokemon(dispatch, setLoading, setPokemons);
         }
     }, [allPokemons, dispatch]);
 
+    // Filtering Pokemons
     useEffect(() => {
         const filteredPokemon = allPokemons.filter((poke) =>{
             const pokeWeight = weightToKg(poke.weight);
@@ -61,7 +50,7 @@ function PokemonList() {
                 typeObj.type.name.toLowerCase() === searchParams.get("type").toLowerCase()
                 )
             ) &&
-            (getWidth(0) <=  pokeWeight && pokeWeight <= getWidth(1)) &&
+            (getWeight(0) <=  pokeWeight && pokeWeight <= getWeight(1)) &&
             (getHeight(0) <= pokeHeight && pokeHeight <= getHeight(1))
         });
 
@@ -76,7 +65,6 @@ function PokemonList() {
         searchParams.set("page", val);
         setSearchParams(searchParams);
     };
-
     const handleSearchChange = (e) => {
         searchParams.set("name", e.target.value.toLowerCase());
         searchParams.set("page", 1);
@@ -122,7 +110,7 @@ function PokemonList() {
         newSearchParams.set("page", 1);
         setSearchParams(newSearchParams);
     };
-    const getWidth = (idx) => {
+    const getWeight = (idx) => {
         const weight = searchParams.get("weight")?.split(",").map(Number);
         return weight ? weight[idx] : [0, 650][idx];
     };
@@ -137,43 +125,78 @@ function PokemonList() {
         searchParams.set("page", 1);
         setSearchParams(searchParams);
     }
+    const resetFilter = () => {
+        searchParams.set("page", 1);
+        searchParams.set("type", "");
+        searchParams.set("name", "");
+        searchParams.set("weight", [0,650]);
+        searchParams.set("height", [0, 20]);
+        setSearchParams(searchParams);
+    }
 
     return (
         <div>
         <Typography variant="h4" sx={{textAlign: "center"}}>Pokemon Search</Typography>
         {/* Filters */}
-        <Box width={"80%"} margin={"auto"}>
-            <TextField
-                label="Search Pokémon"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={searchParams.get("name")}
-                onChange={handleSearchChange}
-            />
-            <Autocomplete
-            value={cfl(searchParams.get("type")) || "All"}
-            disablePortal
-            options={allTypes}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Type" />}
-            onChange={handleSelectTypeChange}
-            />
-            <Slider
-            max={650}
-            value={[getWidth(0),getWidth(1)]}
-            onChange={handleChangeWeight}
-            valueLabelDisplay="auto"
-            disableSwap
-            />
-            <Slider
-            max={20}
-            step={0.1}
-            value={[getHeight(0), getHeight(1)]}
-            onChange={handleChangeHeight}
-            valueLabelDisplay="auto"
-            disableSwap
-            />
+        <Box maxWidth={1350} width={"80%"} margin={"auto"}>
+            <Box display={"flex"} alignItems={"center"} flexWrap={"wrap"} gap={1}>
+                <TextField
+                    label="Search Pokémon"
+                    variant="outlined"
+                    // fullWidth
+                    sx={{flexGrow: 1}}
+                    margin="normal"
+                    value={searchParams.get("name")}
+                    onChange={handleSearchChange}
+                />
+                <Button variant="outlined" 
+                sx={{
+                    p: 1.9, 
+                    mt: 1,
+                    [`@media (max-width:${breakpoint}px)`]: {
+                        mt: -1,
+                        mb: 1,
+                        width: "100%",
+                    },
+                }}
+                onClick={() => resetFilter()}
+                >
+                    Reset Search
+                </Button>
+            </Box>
+            <Box display={"flex"} gap={3} alignItems={"center"} flexWrap={"wrap"}>
+                <Autocomplete
+                value={cfl(searchParams.get("type")) || "All"}
+                disablePortal
+                options={allTypes}
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Type" />}
+                onChange={handleSelectTypeChange}
+                />
+                <Box flexGrow={1} minWidth={300}>
+                    <Box display={"flex"} gap={3} alignItems={"center"}>
+                        <Typography sx={{ whiteSpace: "nowrap"}}>Weight (KG):</Typography>
+                        <Slider
+                        max={650}
+                        value={[getWeight(0),getWeight(1)]}
+                        onChange={handleChangeWeight}
+                        valueLabelDisplay="auto"
+                        disableSwap
+                        />
+                    </Box>
+                    <Box display={"flex"} gap={3}  alignItems={"center"}>
+                    <Typography sx={{ whiteSpace: "nowrap"}}>Height (Meters):</Typography>
+                        <Slider
+                        max={20}
+                        step={0.1}
+                        value={[getHeight(0), getHeight(1)]}
+                        onChange={handleChangeHeight}
+                        valueLabelDisplay="auto"
+                        disableSwap
+                        />
+                    </Box>
+                </Box>
+            </Box>
         </Box>
 
         <Stack spacing={2} alignItems="center" sx={{ marginBlock: 2 }}>

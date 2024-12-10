@@ -44,7 +44,7 @@ const Login = () => {
                 return;
             }
             
-            dispatch(setUser({username: userData.user.username, email: userData.user.email }));
+            dispatch(setUser({username: userData.user.username, email: userData.user.email, favPokemons: userData.user.favPokemons }));
     
             document.cookie = `token=${userData.token}; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days
 

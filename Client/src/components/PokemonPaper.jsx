@@ -5,6 +5,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useTheme } from "@mui/material";
 // Functions
 import { getTypeColor, cfl, calculateTextColor } from "../services/pokemon";
+import { scrollToTop } from "../services/others";
 
 const PokemonPaper = ({ pokemon }) => {
     // const [pokemon, setPokemon] = useState(poke);
@@ -60,7 +61,6 @@ const PokemonPaper = ({ pokemon }) => {
         );
     }
     
-    const scrollToTop = () => window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
     const handleTypeClick = (e, typeName) => {
         e.stopPropagation();
         e.preventDefault();
@@ -68,6 +68,8 @@ const PokemonPaper = ({ pokemon }) => {
         scrollToTop();
         searchParams.set("type", typeName);
         searchParams.set("page", 1);
+        searchParams.set("weight", [0, 650]);
+        searchParams.set("height", [0, 20]);
         setSearchParams(searchParams);
     };
 

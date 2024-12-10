@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Typography, Grid2, Box, CircularProgress, Button, Paper, IconButton } from '@mui/material';
 import AnimationIcon from '@mui/icons-material/Animation';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useTheme } from '@emotion/react';
 import PokemonDetails from './PokemonDetails';
+import { useDispatch, useSelector } from 'react-redux';
+// Functions
+import { addFavPokemon, deleteFavPokemon } from '../services/pokemon';
+import { addPokemon, deletePokemon } from '../store/slices/userSlice';
 
 const cfl = (str) => { return str.charAt(0).toUpperCase() + str.slice(1)};
 
-const PokemonCard = () => {
+const PokemonCard = () => {    
     const { name } = useParams();
+    const user = useSelector(state => state.userLogged);
     const [pokemon, setPokemon] = useState(null);
     const theme = useTheme();
     const secondColor = theme.palette.secondary.main;
@@ -19,6 +24,7 @@ const PokemonCard = () => {
     const [ liked, setLiked ] = useState(false);
     const breakpoint = 780;
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
@@ -31,7 +37,21 @@ const PokemonCard = () => {
         .catch(() => {
             navigate('/404');
         });
+        console.log(user);
+        setLiked(user.favPokemons.some(poke => poke.toLowerCase() === name.toLowerCase()));
     }, [name]);
+
+    const handleLikePokemon = (pokemonName) => {
+        if(!liked) {
+            addFavPokemon(user.email, pokemonName);
+            dispatch(addPokemon(pokemonName));
+        }
+        else {
+            deleteFavPokemon(user.email, pokemonName);
+            dispatch(deletePokemon(pokemonName));
+        }
+        setLiked(!liked);
+    }
 
     if (!pokemon) 
     return <div style={{display: "flex", justifyContent: "center", alignItems: 'end', height:300}}>
@@ -88,7 +108,7 @@ const PokemonCard = () => {
                     left: "10%",
                     zIndex: 1000
                 }}
-                onClick={() => setLiked(!liked)}>
+                onClick={() => handleLikePokemon(pokemon.name)}>
                     { liked ? <FavoriteIcon sx={{ fontSize: 40}}/> : <FavoriteBorderIcon sx={{ fontSize: 40}}/>}
                 </IconButton>
                 <Box 
@@ -109,7 +129,7 @@ const PokemonCard = () => {
             </Box>
         </Grid2>
         <Grid2 xs={12} md={6}>
-            <Paper 
+            <Paper
             elevation={4} 
             sx={{ 
                 position: 'relative',

@@ -11,10 +11,11 @@ const Contact = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         alert("Message Sent!");
+        setMessage("");
     };
 
     return (
-        <Box sx={{ padding: 3 }}>
+        <Box sx={{ padding: 3, maxWidth: 1350, marginInline: "auto" }}>
         {/* Page Title */}
         <Typography variant="h3" component="h1" sx={{ textAlign: "center", marginBottom: 3 }}>
             Contact Us

@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    favPokemons: {
+        type: Array,
+        default: [],
+        required: true
     }
 });
 
