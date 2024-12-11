@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"; 
+import { removeCookie } from "../../services/cookies";
 
 const userSlice = createSlice({
     name: "userLogged",
@@ -26,13 +27,19 @@ const userSlice = createSlice({
             state.email = "";
             state.favPokemons = [];
             state.isLogged = false;
+            removeCookie("token");
         },
         addPokemon: (state, action) => {
-            if (!state.favPokemons.includes(action.payload.pokemonName))
-                state.favPokemons.push(action.payload.pokemonName);
+            const { pokemonName } = action.payload;
+            if (!state.favPokemons.includes(pokemonName)) {
+                state.favPokemons.push(pokemonName);
+            }
         },
         deletePokemon: (state, action) => {
-            state.favPokemons = state.favPokemons.filter(poke => poke !== action.payload.pokemonName);
+            const { pokemonName } = action.payload;
+            state.favPokemons = state.favPokemons.filter(
+                (poke) => poke.toLowerCase() !== pokemonName.toLowerCase()
+            );
         },
     }
 })

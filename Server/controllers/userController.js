@@ -63,7 +63,6 @@ export const loginUser = async (req, res) => {
             {
                 email: user.email,
                 username: user.username,
-                favPokemons: user.favPokemons
             },
             jwtSecretKey,
             JTW_EXPIRATION
@@ -104,8 +103,10 @@ export const getSelf = async (req, res) => {
         let jwtSecretKey = process.env.JWT_SECRET_KEY;
     
         const token = req.headers.authorization.split(" ")[1]; // Extract the token from the `Authorization` header.
-        const decoded = await jwt.verify(token, jwtSecretKey); // Verify and decode the token.
-        res.send(decoded); // Send the decoded token information as the response.
+        const decoded = await jwt.verify(token, jwtSecretKey); // Verify and decode the token.    
+        const user = await userModel.findOne({ email: decoded.email });
+
+        res.send(user);
     } 
     catch (error) {
         console.log(error); // dev mod

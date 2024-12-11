@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import webLogo from './../assets/pokemon_logo.png'
 import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemButton, ListItemIcon, Box, Button, Avatar} from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,8 +14,10 @@ import { useDispatch, useSelector } from "react-redux";
 // Functions
 import { stringAvatar, stringToColor } from "../services/avatar.js";
 import { unsetUser } from "../store/slices/userSlice.js";
+import { ThemeContext } from "../ThemeProviderComponent.jsx";
 
 const Navbar = () => {
+    const { mode, toggleTheme } = useContext(ThemeContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -73,6 +75,7 @@ const Navbar = () => {
                         fontSize: 25,
                         ml: 2
                     }}
+                    onClick={toggleTheme}
                     >
                     PokeZone
                 </Typography>
@@ -175,6 +178,7 @@ const Navbar = () => {
                     marginBlock: 1,
                     ml: 2
                 }}
+                onClick={toggleTheme}
                 >
                 PokeZone
             </Typography>

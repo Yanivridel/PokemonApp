@@ -159,13 +159,13 @@ function PokemonDetails({pokemon: poke, category}) {
                     }
                     secondary={
                     <>
-                        <Typography variant="body2">
+                        <Typography variant="span">
                         <strong>Learn Method:</strong> {move.learnMethod}
-                        </Typography>
-                        <Typography variant="body2">
+                        </Typography><br/>
+                        <Typography variant="span">
                         <strong>Level Learned:</strong> {move.levelLearnedAt > 0 ? move.levelLearnedAt : 'N/A'}
-                        </Typography>
-                        <Typography variant="body2">
+                        </Typography><br/>
+                        <Typography variant="span">
                         <strong>Version:</strong> {move.versionGroup.replaceAll("-", " ")}
                         </Typography>
                     </>

@@ -13,6 +13,7 @@ import { fetchAllPokemon } from "../services/pokemon.js";
 function PokemonList() {
     const [currentPokemonsPage, setCurrentPokemonsPage] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
+    const favPokemons = useSelector(state => state.userLogged.favPokemons)
 
     const minDistanceWeight = 30;
     const minDistanceHeight = 0.1;
@@ -28,6 +29,7 @@ function PokemonList() {
         type: "",
         weight: [0,650],
         height: [0,20],
+        fav: "false",
     });
     
     // Mount Call 
@@ -44,14 +46,15 @@ function PokemonList() {
         const filteredPokemon = allPokemons.filter((poke) =>{
             const pokeWeight = weightToKg(poke.weight);
             const pokeHeight = heightToMeters(poke.height);
-            return poke.name.toLowerCase().includes(searchParams.get("name").toLowerCase()) &&
+            return poke.name.replaceAll("-"," ").toLowerCase().includes(searchParams.get("name").toLowerCase()) &&
             (!searchParams.get("type") ||
                 poke.types.some((typeObj) =>
                 typeObj.type.name.toLowerCase() === searchParams.get("type").toLowerCase()
                 )
             ) &&
             (getWeight(0) <=  pokeWeight && pokeWeight <= getWeight(1)) &&
-            (getHeight(0) <= pokeHeight && pokeHeight <= getHeight(1))
+            (getHeight(0) <= pokeHeight && pokeHeight <= getHeight(1)) &&
+            (searchParams.get("fav") === "false" || favPokemons.some(fav => fav.toLowerCase() === poke.name.toLowerCase()))
         });
 
         const page = +searchParams.get("page") || 1;
@@ -131,8 +134,14 @@ function PokemonList() {
         searchParams.set("name", "");
         searchParams.set("weight", [0,650]);
         searchParams.set("height", [0, 20]);
+        searchParams.set("fav", "false");
         setSearchParams(searchParams);
     }
+    const handleFavClick = () => {
+        searchParams.set("page", 1);
+        searchParams.set("fav", searchParams.get("fav") === "true" ? "false" : "true");
+        setSearchParams(searchParams);
+    };
 
     return (
         <div>
@@ -169,10 +178,23 @@ function PokemonList() {
                 value={cfl(searchParams.get("type")) || "All"}
                 disablePortal
                 options={allTypes}
-                sx={{ width: 300 }}
+                sx={{ width: 300 , flexGrow: 1}}
                 renderInput={(params) => <TextField {...params} label="Type" />}
                 onChange={handleSelectTypeChange}
                 />
+                <Button variant={ searchParams.get("fav") === "false" ? "outlined" : "contained"} 
+                sx={{
+                    p: 1.9,
+                    flexGrow: 1,
+                    [`@media (max-width:${breakpoint}px)`]: {
+                        mt: -1,
+                        mb: 1,
+                    },
+                }}
+                onClick={() => handleFavClick()}
+                >
+                    Favorites
+                </Button>
                 <Box flexGrow={1} minWidth={300}>
                     <Box display={"flex"} gap={3} alignItems={"center"}>
                         <Typography sx={{ whiteSpace: "nowrap"}}>Weight (KG):</Typography>

@@ -24,10 +24,7 @@ const UserSettings = () => {
     useEffect(() => {
         if(!userLogged.isLogged)
             navigate('/login');
-    }, [])
-
-    // Theme management for dynamic style
-    const themeObject = useTheme();
+    }, [userLogged.isLogged, navigate])
 
     const handleAvatarChange = (e) => {
         
@@ -85,7 +82,7 @@ const UserSettings = () => {
             variant="outlined"
             fullWidth
             type="email"
-            value={email}
+            value={userLogged.email}
             onChange={(e) => setEmail(e.target.value)}
             />
 

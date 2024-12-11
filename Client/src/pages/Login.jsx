@@ -19,7 +19,7 @@ const Login = () => {
     useEffect(() => {
         if(userLogged.isLogged)
             navigate('/user-settings');
-    }, [])
+    }, [userLogged.isLogged, navigate])
     
     const togglePasswordVisibility = () => setShowPassword((show) => !show);
 

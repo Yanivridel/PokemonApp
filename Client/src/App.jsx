@@ -21,6 +21,7 @@ import Error404 from "./pages/Error404";
 
 const App = () => {
   const dispatch = useDispatch();
+  if(!localStorage.getItem("themeMode")) localStorage.setItem('themeMode', "light");
 
   const reloadUser = async () => {
     const token = getCookie('token');
@@ -48,7 +49,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/user-settings" element={<UserSettings />} />
-        {/* ?page=1&name=&type=&weight=0&weight=650&height=0&height=20 */}
+
         <Route path="*" element={<Error404 />} />
 
       </Routes>

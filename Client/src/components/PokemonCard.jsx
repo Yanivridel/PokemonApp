@@ -30,25 +30,27 @@ const PokemonCard = () => {
         fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
         .then((response) => response.json())
         .then((data) => {
-            if (!data || Object.keys(data).length === 0)
+            if (!data || Object.keys(data).length === 0) {
                 navigate('/404');
+            }
             setPokemon(data);
         })
         .catch(() => {
             navigate('/404');
         });
-        console.log(user);
-        setLiked(user.favPokemons.some(poke => poke.toLowerCase() === name.toLowerCase()));
-    }, [name]);
+    
+        setLiked(user.favPokemons.some((poke) => poke.toLowerCase() === name.toLowerCase()))
+        
+    }, [name, user.favPokemons, navigate]);
 
     const handleLikePokemon = (pokemonName) => {
         if(!liked) {
             addFavPokemon(user.email, pokemonName);
-            dispatch(addPokemon(pokemonName));
+            dispatch(addPokemon({pokemonName}));
         }
         else {
             deleteFavPokemon(user.email, pokemonName);
-            dispatch(deletePokemon(pokemonName));
+            dispatch(deletePokemon({pokemonName}));
         }
         setLiked(!liked);
     }
