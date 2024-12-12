@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000';
+const LOCAL_HOST = 'http://localhost:3000';
+const SERVER_HOST = 'https://pokemonappserver.onrender.com';
+const API_URL = SERVER_HOST;
 
 
 export const checkLogin = async ({email, password}) => {
