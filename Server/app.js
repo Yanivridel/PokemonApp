@@ -9,12 +9,7 @@ const PORT = 3000;
 // Middleware Configuration
 dotenv.config();
 app.use(express.json());
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(cors());
 
 // Database Connection
 mongoose.connect(process.env.DB_URI).then(() => console.log("Successfully Connected to DB"));
