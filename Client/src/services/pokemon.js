@@ -2,6 +2,9 @@ import axios from "axios";
 
 // Fetching Pokemon Api
 const pokemonUrl = 'https://pokeapi.co/api/v2/pokemon';
+const LOCAL_HOST = 'http://localhost:3000';
+const SERVER_HOST = 'https://pokemonappserver.onrender.com';
+const serverUrl = SERVER_HOST;
 
 export const fetchAllPokemon = async (dispatch, setLoading, setPokemons) => {
     dispatch(setLoading(true));
@@ -25,7 +28,7 @@ export const fetchThreePokemons = async (setPokemons) => {
     setPokemons(dataArr);
 }
 // Fetching Server
-const serverUrl = 'http://localhost:3000';
+
 
 export const addFavPokemon = async (email, pokemonName) => {
     try {
