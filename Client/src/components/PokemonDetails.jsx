@@ -125,7 +125,7 @@ function PokemonDetails({pokemon: poke, category}) {
             ))}
             </>}
             {category === "Evolution" && <>
-            <Typography variant="h6" sx={{ marginBlock: 2, fontSize: 17}}>Evolution Chain</Typography>
+            <Typography variant="h6" sx={{ marginBlock: 2, fontSize: 17, color: "black"}}>Evolution Chain</Typography>
             <EvolutionChain pokeSpecies={pokeSpecies}/>
             </>}
             {category === "Moves" && <>

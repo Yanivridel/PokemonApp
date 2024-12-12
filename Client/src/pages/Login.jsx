@@ -94,7 +94,7 @@ const Login = () => {
                 margin="normal"
                 required
                 name="email"
-                autoComplete="email"
+                autoComplete="username"
                 error={Boolean(error)}
                 onChange={removeError}
             />
@@ -108,7 +108,7 @@ const Login = () => {
                     margin="normal"
                     required
                     name="password"
-                    autoComplete="password"
+                    autoComplete="current-password"
                     error={Boolean(error)}
                     onChange={removeError}
                 />

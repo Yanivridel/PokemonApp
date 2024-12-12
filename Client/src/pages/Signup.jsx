@@ -34,13 +34,13 @@ const Signup = () => {
         const data = Object.fromEntries((new FormData(e.target)).entries());
 
         if (!data.email.includes("@")) {
-            addUserEmailError("Invalid email format");
+            addError("email", "Invalid email format", [emailRef, usernameRef])
             setLoading(false);
             return;
         }
 
         if (data.password !== data.confirmPassword) {
-            addPasswordError("Passwords do not match");
+            addError("password", "Passwords do not match", [passwordRef, confirmPasswordRef])
             setLoading(false);
             return;
         }
@@ -56,12 +56,12 @@ const Signup = () => {
             }, 2000);
         } catch (err) {
             if (err.status === 409) {
-                addUserEmailError("Email or username already taken");
+                addError("email", "Email or username already taken", [emailRef, usernameRef])
                 setLoading(false);
                 return;
             }
             console.error("Signup error:", err);
-            addPasswordError("An error occurred while signing up");
+            addError("password", "An error occurred while signing up", [passwordRef, confirmPasswordRef])
         } finally {
             setLoading(false);
             e.target.reset();
@@ -70,24 +70,17 @@ const Signup = () => {
 
     const removePasswordError = () => setPasswordError("");
     const removeUserEmailError = () => setUserEmailError("");
-    const addPasswordError = (err) => {
-        setPasswordError(err);
-        passwordRef.current.classList.add("shake");
-        confirmPasswordRef.current.classList.add("shake");
-        setTimeout(() => {
-            passwordRef.current.classList.remove("shake");
-            confirmPasswordRef.current.classList.remove("shake");
-        }, 500);
-    }
-    const addUserEmailError = (err) => {
-        setUserEmailError(err);
-        usernameRef.current.classList.add("shake");
-        emailRef.current.classList.add("shake");
-        setTimeout(() => {
-            usernameRef.current.classList.remove("shake");
-            emailRef.current.classList.remove("shake");
-        }, 500);
-    }
+
+
+    const addError = (errorType, message, refs = []) => {
+        if (errorType === 'email') setUserEmailError(message);
+        else if (errorType === 'password') setPasswordError(message);
+    
+        refs.forEach(ref => {
+            ref.current.classList.add("shake");
+            setTimeout(() => ref.current.classList.remove("shake"), 500);
+        });
+    };
 
     return (
         <Box
