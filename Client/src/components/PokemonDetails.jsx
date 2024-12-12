@@ -81,7 +81,7 @@ function PokemonDetails({pokemon: poke, category}) {
                         sx={{ 'td': { border: 0 } }}
                         >
                             <TableCell align="left" sx={{ color: "gray"}}>{stat.statName}</TableCell>
-                            <TableCell align="left" sx={{ display:"flex", alignItems: 'center', gap: 1}}>
+                            <TableCell align="left" sx={{ color: "black", display:"flex", alignItems: 'center', gap: 1}}>
                                 <span>{stat.baseValue}</span>
                                 <LinearProgress
                                 variant="determinate"
@@ -175,7 +175,7 @@ function PokemonDetails({pokemon: poke, category}) {
                 <Divider />
             </div>
             ))}
-        </List>
+            </List>
             </>}
         </Box>
     )

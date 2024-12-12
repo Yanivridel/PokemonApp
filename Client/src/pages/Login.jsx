@@ -108,7 +108,7 @@ const Login = () => {
                     margin="normal"
                     required
                     name="password"
-                    autoComplete="current-password"
+                    autoComplete="password"
                     error={Boolean(error)}
                     onChange={removeError}
                 />

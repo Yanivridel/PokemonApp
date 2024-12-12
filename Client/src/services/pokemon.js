@@ -35,7 +35,7 @@ export const addFavPokemon = async (email, pokemonName) => {
         });
     
         if (response.status === 200) {
-            console.log('Successfully added Pokémon to favorites', response.data);
+            // console.log('Successfully added Pokémon to favorites', response.data);
             return response.data;
         }
     } catch (error) {
@@ -52,7 +52,7 @@ export const deleteFavPokemon = async (email, pokemonName) => {
         });
     
         if (response.status === 200) {
-            console.log('Successfully deleted Pokémon to favorites', response.data);
+            // console.log('Successfully deleted Pokémon to favorites', response.data);
             return response.data;
         }
     } catch (error) {

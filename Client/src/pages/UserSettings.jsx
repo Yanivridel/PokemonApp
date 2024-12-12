@@ -1,20 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { TextField, Button, Box, Avatar, Typography, Grid2, FormControlLabel, Checkbox, InputLabel, Select, MenuItem, CircularProgress, FormControl } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { stringAvatar, stringToColor } from "../services/avatar";
+import { stringAvatar } from "../services/avatar";
 import { unsetUser } from './../store/slices/userSlice'
 import { ThemeContext } from "../ThemeProviderComponent";
+import { changeUsername } from "../services/api";
 
 const UserSettings = () => {
-    // States for form fields and avatar
-    const [email, setEmail] = useState("user@example.com");
-    const [password, setPassword] = useState("");
-    const [username, setUsername] = useState("PokemonMaster");
-    const [avatar, setAvatar] = useState(null);
-    const [notifications, setNotifications] = useState(true);
+    const [username, setUsername] = useState("");
+    const [notifications, setNotifications] = useState(localStorage.getItem("notification") === "false" ? false : true || true);
+    const usernameRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const { mode, toggleTheme } = useContext(ThemeContext);
 
@@ -25,26 +22,42 @@ const UserSettings = () => {
     useEffect(() => {
         if(!userLogged.isLogged)
             navigate('/login');
+        setUsername(userLogged.username);
     }, [userLogged.isLogged, navigate])
 
     const handleAvatarChange = (e) => {
         
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if(!username) 
+            return;
+
         setLoading(true);
 
-        // Simulate a request
-        setTimeout(() => {
-        setLoading(false);
-        alert("User settings updated!");
-        }, 2000);
+        try {
+            const response = await changeUsername(userLogged.email, username);
+            alert("Username Changed Successfully");
+        }
+        catch (err) {
+            console.log("error: " + err);
+            alert("Failed changing username");
+        }
+        finally {
+            setLoading(false);
+            window.location.reload();
+        }
     };
 
     const handleLogout = (e) => {
         dispatch(unsetUser());
         navigate('/login')
+    }
+
+    const handleChangeNotification = (e) => {
+        localStorage.setItem("notification", e.target.checked);
+        setNotifications(e.target.checked);
     }
 
     return (
@@ -57,8 +70,7 @@ const UserSettings = () => {
             {/* Avatar */}
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Avatar 
-                // src={avatar || "https://via.placeholder.com/150"} 
-                alt={username} 
+                alt={userLogged.username}
                 {...(userLogged.isLogged ? stringAvatar(userLogged.username) : {})}
             />
             <Button variant="outlined" component="label" sx={{ alignSelf: "center", marginTop: 1 }}>
@@ -72,9 +84,10 @@ const UserSettings = () => {
             label="Username"
             variant="outlined"
             fullWidth
-            value={userLogged.username}
+            value={username}
             onChange={(e) => setUsername(e.target.value)}
             />
+            {!username && <Typography color="error" sx={{ fontSize: 15}}>Username cannot be blank</Typography>}
 
             {/* Email */}
             <TextField
@@ -84,11 +97,12 @@ const UserSettings = () => {
             fullWidth
             type="email"
             value={userLogged.email}
-            onChange={(e) => setEmail(e.target.value)}
             />
 
             <Box sx={{ display: "flex", gap: 1}}>
-                <Button color="secondary" variant="outlined" sx={{ flexGrow: 1}}>
+                <Button color="secondary" variant="outlined" sx={{ flexGrow: 1}}
+                onClick={() => alert("Currently Unavailable...")}
+                >
                     Change Password
                 </Button>
                 <Button 
@@ -122,7 +136,7 @@ const UserSettings = () => {
                         control={
                             <Checkbox
                                 checked={notifications}
-                                onChange={(e) => setNotifications(e.target.checked)}
+                                onChange={(e) => handleChangeNotification(e)}
                             />
                         }
                         label="Enable Notifications"

@@ -224,3 +224,42 @@ export const deleteFavPokemon = async (req, res) => {
     });
     }
 };
+
+export const changeUsername = async (req, res) => {
+    try {
+        const { email, username } = req.body;
+
+        if(!email || !username) 
+            return res.status(400).send({status: "error", message: "Missing required parameters"});
+
+        const updatedUser = await userModel.findOneAndUpdate(
+            { email },
+            { username },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                status: "error",
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            message: "Username updated successfully",
+            user: {
+                email: updatedUser.email,
+                username: updatedUser.username,
+            },
+        });
+    } 
+    catch (error) {
+        console.log(error); // dev mod
+        res.status(500).json({
+            status: "error",
+            message: "An unexpected error occurred",
+            error: error.message,
+        });
+    }
+}

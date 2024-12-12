@@ -21,7 +21,6 @@ import Error404 from "./pages/Error404";
 
 const App = () => {
   const dispatch = useDispatch();
-  if(!localStorage.getItem("themeMode")) localStorage.setItem('themeMode', "light");
 
   const reloadUser = async () => {
     const token = getCookie('token');

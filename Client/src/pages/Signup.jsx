@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TextField, Button, Box, Typography, Alert, CircularProgress, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { createUser } from "../services/api";
 
@@ -196,6 +196,12 @@ const Signup = () => {
             Sign up successfully ! redirecting <CircularProgress color="secondary" size={20} sx={{ position: 'absolute', ml: 2}} />
         </Alert>
         }
+        <Typography component="h3" mt={1}>
+            Already have an account ?
+            <Link to={'/login'}>
+                <Typography display={"inline-block"} color="secondary" ml={1} fontWeight={600}>Login</Typography>
+            </Link>
+        </Typography>
         <Button
             fullWidth
             type="submit"

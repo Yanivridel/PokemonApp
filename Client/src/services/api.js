@@ -39,3 +39,16 @@ export const getSelf = async (token) => {
         throw error;
     }
 };
+
+export const changeUsername = async (email, username) => {
+    try {
+        const { data } = await axios.post(`${API_URL}/api/users/change/username`, {
+            email,
+            username,
+        });
+        return data;
+    } catch (error) {
+        console.error('Failed changing username:', error);
+        throw error;
+    }
+}

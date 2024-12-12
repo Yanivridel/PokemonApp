@@ -14,7 +14,7 @@ import { useTheme } from "@emotion/react";
 function PokemonList() {
     const [currentPokemonsPage, setCurrentPokemonsPage] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
-    const favPokemons = useSelector(state => state.userLogged.favPokemons)
+    const { favPokemons, isLogged } = useSelector(state => state.userLogged)
     const theme = useTheme();
 
     const minDistanceWeight = 30;
@@ -140,6 +140,10 @@ function PokemonList() {
         setSearchParams(searchParams);
     }
     const handleFavClick = () => {
+        if(!isLogged) {
+            alert("To watch liked pokemons you must login first");
+            return;
+        }
         searchParams.set("page", 1);
         searchParams.set("fav", searchParams.get("fav") === "true" ? "false" : "true");
         setSearchParams(searchParams);

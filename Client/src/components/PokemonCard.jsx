@@ -15,7 +15,7 @@ const cfl = (str) => { return str.charAt(0).toUpperCase() + str.slice(1)};
 
 const PokemonCard = () => {    
     const { name } = useParams();
-    const user = useSelector(state => state.userLogged);
+    const userLogged = useSelector(state => state.userLogged);
     const [pokemon, setPokemon] = useState(null);
     const theme = useTheme();
     const secondColor = theme.palette.secondary.main;
@@ -39,17 +39,21 @@ const PokemonCard = () => {
             navigate('/404');
         });
     
-        setLiked(user.favPokemons.some((poke) => poke.toLowerCase() === name.toLowerCase()))
+        setLiked(userLogged.favPokemons.some((poke) => poke.toLowerCase() === name.toLowerCase()))
         
-    }, [name, user.favPokemons, navigate]);
+    }, [name, userLogged.favPokemons, navigate]);
 
     const handleLikePokemon = (pokemonName) => {
+        if(!userLogged.isLogged) {
+            alert("To like pokemons you must login first");
+            return;
+        }
         if(!liked) {
-            addFavPokemon(user.email, pokemonName);
+            addFavPokemon(userLogged.email, pokemonName);
             dispatch(addPokemon({pokemonName}));
         }
         else {
-            deleteFavPokemon(user.email, pokemonName);
+            deleteFavPokemon(userLogged.email, pokemonName);
             dispatch(deletePokemon({pokemonName}));
         }
         setLiked(!liked);
