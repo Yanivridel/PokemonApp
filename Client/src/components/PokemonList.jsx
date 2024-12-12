@@ -9,16 +9,18 @@ import './css/PokemonList.css';
 import { scrollToTop } from '../services/others';
 import { weightToKg, heightToMeters, allTypes, cfl } from "../services/pokemon.js";
 import { fetchAllPokemon } from "../services/pokemon.js";
+import { useTheme } from "@emotion/react";
 
 function PokemonList() {
     const [currentPokemonsPage, setCurrentPokemonsPage] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const favPokemons = useSelector(state => state.userLogged.favPokemons)
+    const theme = useTheme();
 
     const minDistanceWeight = 30;
     const minDistanceHeight = 0.1;
 
-    const breakpoint = 470
+    const breakpoint = 492 //470
 
     const dispatch = useDispatch();
     const { allPokemons, loading } = useSelector((state) => state.pokemonsData);
@@ -144,7 +146,10 @@ function PokemonList() {
     };
 
     return (
-        <div>
+        <Box sx={{
+        paddingBlock:2,
+            color: theme.palette.text.primary,
+        }}>
         <Typography variant="h4" sx={{textAlign: "center"}}>Pokemon Search</Typography>
         {/* Filters */}
         <Box maxWidth={1350} width={"80%"} margin={"auto"}>
@@ -247,7 +252,10 @@ function PokemonList() {
                 columns={{ xs: 4, sm: 8, md: 12 }}
                 sx={{ justifyContent: "center", m: 1 }}
                 >
-                {currentPokemonsPage.map((poke, index) => (
+                {currentPokemonsPage.length === 0 ?
+                <Typography>No Pokemons Match Search Filters...</Typography>
+                :
+                currentPokemonsPage.map((poke, index) => (
                     <Grid2 key={poke.name + index} xs={2} sm={4} md={3}>
                     <PokemonPaper pokemon={poke} />
                     </Grid2>
@@ -255,7 +263,7 @@ function PokemonList() {
                 </Grid2>
             </Box>
 
-            <Stack spacing={2} alignItems="center" sx={{ marginBlock: 2 }}>
+            <Stack spacing={2} alignItems="center" sx={{ mt: 2 }}>
                 <Pagination
                 count={totalPages}
                 page={+searchParams.get("page") || 1}
@@ -268,7 +276,7 @@ function PokemonList() {
         </Stack>
             </>
         )}
-        </div>
+        </Box>
     );
 }
 

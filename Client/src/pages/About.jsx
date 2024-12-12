@@ -3,9 +3,11 @@ import { Box, Typography, Grid, Paper, Avatar, Divider } from "@mui/material";
 // Images
 import chatGPTImage from './../assets/image/chatGPT_img.png';
 import rorschaks from './../assets/image/rorschaks.png';
+import { useTheme } from "@emotion/react";
 
 
 const About = () => {
+    const theme = useTheme();
 
     const teamData = [
         { img: rorschaks, name: "Yaniv Ridel", msg: "Passionate developer with zero love for Pokémon."},
@@ -13,7 +15,9 @@ const About = () => {
     ]
 
     return (
-        <Box sx={{ padding: 3, maxWidth: 1350, marginInline: "auto" }}>
+        <Box sx={{ padding: 3, maxWidth: 1350, marginInline: "auto",
+            color: theme.palette.text.primary,
+        }}>
         {/* Page Title */}
         <Typography variant="h3" component="h1" sx={{ textAlign: "center", marginBottom: 3 }}>
             About Us

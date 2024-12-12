@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextField, Button, Box, Avatar, Typography, Grid2, FormControlLabel, Checkbox, InputLabel, Select, MenuItem, CircularProgress, FormControl } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { stringAvatar, stringToColor } from "../services/avatar";
 import { unsetUser } from './../store/slices/userSlice'
+import { ThemeContext } from "../ThemeProviderComponent";
 
 const UserSettings = () => {
     // States for form fields and avatar
@@ -13,9 +14,9 @@ const UserSettings = () => {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("PokemonMaster");
     const [avatar, setAvatar] = useState(null);
-    const [theme, setTheme] = useState("light");
     const [notifications, setNotifications] = useState(true);
     const [loading, setLoading] = useState(false);
+    const { mode, toggleTheme } = useContext(ThemeContext);
 
     const userLogged = useSelector(state => state.userLogged);
     const navigate = useNavigate();
@@ -107,8 +108,8 @@ const UserSettings = () => {
                     <Select
                         fullWidth
                         labelId="theme-label"
-                        value={theme}
-                        onChange={(e) => setTheme(e.target.value)}
+                        value={mode}
+                        onChange={() => toggleTheme()}
                     >
                         <MenuItem value="light">Light</MenuItem>
                         <MenuItem value="dark">Dark</MenuItem>

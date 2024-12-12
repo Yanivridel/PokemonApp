@@ -52,7 +52,7 @@ const Navbar = () => {
 
     return (
         <>
-        <AppBar position="static">
+        <AppBar position="static" color="primary">
             <Toolbar>
             {isSmallScreen ? (
                 // SMALL SCREEN
@@ -65,20 +65,24 @@ const Navbar = () => {
                     <MenuIcon />
                 </IconButton>
                 {/* Title */}
-                <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{
-                        flexGrow: 1,
-                        fontFamily: '"Parkinsans", sans-serif',
-                        fontWeight: 900,
-                        fontSize: 25,
-                        ml: 2
-                    }}
-                    onClick={toggleTheme}
-                    >
-                    PokeZone
-                </Typography>
+                <Box flexGrow={1}>
+                    <Typography
+                        variant="h6"
+                        component="div"
+                        sx={{
+                            flexGrow: 1,
+                            fontFamily: '"Parkinsans", sans-serif',
+                            fontWeight: 900,
+                            fontSize: 25,
+                            ml: 2,
+                            cursor: "pointer",
+                            width: "fit-content"
+                        }}
+                        onClick={toggleTheme}
+                        >
+                        PokeZone
+                    </Typography>
+                </Box>
                 <Box
                     component="img"
                     src={webLogo}
@@ -95,19 +99,24 @@ const Navbar = () => {
                     alt="webLogo"
                     sx={{ height: 90, padding: 1}}
                     />
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{
-                            flexGrow: 1,
-                            fontFamily: '"Parkinsans", sans-serif',
-                            fontWeight: 900,
-                            fontSize: 25,
-                            ml: 2
-                        }}
-                        >
-                        PokeZone
-                    </Typography>
+                    <Box flexGrow={1}>
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{
+                                // flexGrow: 1,
+                                fontFamily: '"Parkinsans", sans-serif',
+                                fontWeight: 900,
+                                fontSize: 25,
+                                ml: 2,
+                                cursor: "pointer",
+                                width: "fit-content",
+                            }}
+                            onClick={toggleTheme}
+                            >
+                            PokeZone
+                        </Typography>
+                    </Box>
                     {/* Header Navigation Links */}
                     <Box sx={{ display: "flex", gap: 2 }}>
                         {navLinks.map((link) => (
@@ -176,13 +185,14 @@ const Navbar = () => {
                     fontSize: 25,
                     color: theme.palette.secondary.main,
                     marginBlock: 1,
-                    ml: 2
+                    ml: 2,
+                    cursor: "pointer"
                 }}
                 onClick={toggleTheme}
                 >
                 PokeZone
             </Typography>
-            <hr style={{ borderColor: "#69203a", width: "90%", marginInline: "auto"}}/>
+            <hr style={{ borderColor: mode === "light" ? "#69203a" : "#2a7f76", width: "90%", marginInline: "auto"}}/>
             {/* Nav List */}
             <List sx={{ width: 250 }}>
             {navLinks.map((link, index) => (
@@ -194,16 +204,16 @@ const Navbar = () => {
                     onClick={(e) => handleListItemClick(e,index)}
                     sx={{
                         "&:hover": {
-                            backgroundColor: theme.palette.custom.softPurple,
-                            color: "#fff",
+                            // backgroundColor: theme.palette.custom.softPurple,
+                            // color: "#fff",
                         },
-                        "&.Mui-selected": {
-                        backgroundColor: theme.palette.custom.softPurple,
-                        color: "#fff", 
-                        },
-                        "&.Mui-selected:hover": {
-                            backgroundColor: theme.palette.primary.main,
-                        },
+                        // "&.Mui-selected": {
+                        // backgroundColor: theme.palette.custom.softPurple,
+                        // color: "#fff", 
+                        // },
+                        // "&.Mui-selected:hover": {
+                        //     backgroundColor: theme.palette.primary.main,
+                        // },
                     }}
                 >
                     <ListItemText primary={link.label} />
@@ -231,7 +241,8 @@ const Navbar = () => {
                     },
                 }}
                 >
-                    Log Out
+                    Log Out 
+                    {/* <Box component="img" src={LogoutIcon}></Box> */}
                 </Typography>
             </Box>
             :

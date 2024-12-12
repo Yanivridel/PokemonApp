@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Grid, Button, Card, CardContent, Paper, Chip } from "@mui/material";
+import { Box, Typography, Button, Paper, Chip } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 // img / gif
 import rollGif from "./../assets/gif/poke-ball-rolling.gif"
@@ -25,7 +25,9 @@ const Home = () => {
     }
 
     return (
-    <Box sx={{ padding: 3 , maxWidth: 1350, marginInline: "auto"}}>
+    <Box sx={{ padding: 3 , maxWidth: 1350, marginInline: "auto",
+        color: theme.palette.text.primary,
+    }}>
         {/* Welcome Section */}
         <Box sx={{ textAlign: "center", marginBottom: 4 }}>
             <Typography variant="h3" component="h1" sx={{ fontWeight: "bold", marginBottom: 2 }}>

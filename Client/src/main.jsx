@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import store from './store';
 import ThemeProviderComponent from './ThemeProviderComponent';
 
-// Main component with the Provider and ThemeProvider
 const Main = () => {
   return (
     <Provider store={store}>

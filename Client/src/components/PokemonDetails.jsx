@@ -48,13 +48,13 @@ function PokemonDetails({pokemon: poke, category}) {
                         sx={{ 'td': { border: 0 } }}
                         >
                             <TableCell align="left" sx={{ color: "gray"}}>{row.leftSide}</TableCell>
-                            <TableCell align="left">{row.rightSide}</TableCell>
+                            <TableCell align="left" sx={{ color: "black"}}>{row.rightSide}</TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Typography variant="h6" sx={{ marginTop: 1, fontSize: 17}}>Breeding</Typography>
+            <Typography variant="h6" sx={{ marginTop: 1, fontSize: 17, color: "black"}}>Breeding</Typography>
             <TableContainer component={Box}>
                 <Table aria-label="about breeding table">
                     <TableBody>
@@ -64,7 +64,7 @@ function PokemonDetails({pokemon: poke, category}) {
                         sx={{ 'td': { border: 0 } }}
                         >
                             <TableCell align="left" sx={{ color: "gray"}}>{row.leftSide}</TableCell>
-                            <TableCell align="left">{row.rightSide}</TableCell>
+                            <TableCell align="left" sx={{ color: "black"}}>{row.rightSide}</TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
@@ -129,7 +129,7 @@ function PokemonDetails({pokemon: poke, category}) {
             <EvolutionChain pokeSpecies={pokeSpecies}/>
             </>}
             {category === "Moves" && <>
-            <Typography variant="h6" sx={{ mt: 2, fontSize: 17}}>Popular Moves</Typography>
+            <Typography variant="h6" sx={{ mt: 2, fontSize: 17, color: "black"}}>Popular Moves</Typography>
             <List sx={{
                 [`@media (max-width:${breakpoint}px)`]: {
                     maxHeight: 350,
@@ -153,12 +153,12 @@ function PokemonDetails({pokemon: poke, category}) {
                 <ListItem alignItems="flex-start">
                 <ListItemText
                     primary={
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography variant="subtitle1" fontWeight="bold" sx={{ color: "black"}}>
                         {move.name.split('-').map((word) => cfl(word)).join(" ")}
                     </Typography>
                     }
                     secondary={
-                    <>
+                    <Box sx={{ color: "#494d4c"}}>
                         <Typography variant="span">
                         <strong>Learn Method:</strong> {move.learnMethod}
                         </Typography><br/>
@@ -168,7 +168,7 @@ function PokemonDetails({pokemon: poke, category}) {
                         <Typography variant="span">
                         <strong>Version:</strong> {move.versionGroup.replaceAll("-", " ")}
                         </Typography>
-                    </>
+                    </Box>
                     }
                 />
                 </ListItem>

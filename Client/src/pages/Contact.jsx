@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Grid, Paper } from "@mui/material";
+import { useTheme } from "@emotion/react";
 
 const Contact = () => {
     const [message, setMessage] = useState("");
+    const theme = useTheme();
 
     const handleMessageChange = (event) => {
         setMessage(event.target.value);
@@ -15,7 +17,9 @@ const Contact = () => {
     };
 
     return (
-        <Box sx={{ padding: 3, maxWidth: 1350, marginInline: "auto" }}>
+        <Box sx={{ padding: 3, maxWidth: 1350, marginInline: "auto",
+            color: theme.palette.text.primary,
+        }}>
         {/* Page Title */}
         <Typography variant="h3" component="h1" sx={{ textAlign: "center", marginBottom: 3 }}>
             Contact Us
